@@ -19,3 +19,12 @@ jobs:
 
     - name: Build the Docker image
       run: docker build -t sergioortiz170992/nginx:latest -f Dockerfile .
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push Docker Image to Docker Hub
+      run: docker push sergioortiz170992/nginx:latest
