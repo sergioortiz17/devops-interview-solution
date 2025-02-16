@@ -3,11 +3,19 @@ pipeline {
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        IMAGE_NAME = 'your-dockerhub-username/nginx:latest'
-        EC2_HOST = 'ec2-user@<IP_PUBLICA_EC2>'
+        IMAGE_NAME = 'sergioortiz170992/nginx:latest'
     }
 
     stages {
+        stage('Obtener IP Pública de EC2') {
+            steps {
+                script {
+                    EC2_HOST = "ec2-user@" + sh(script: "curl -s http://169.254.169.254/latest/meta-data/public-ipv4", returnStdout: true).trim()
+                    echo "📢 IP Pública de EC2: ${EC2_HOST}"
+                }
+            }
+        }
+
         stage('Checkout Código') {
             steps {
                 git branch: 'main', url: 'https://github.com/sergioortiz17/devops-interview-solution.git'
@@ -38,17 +46,19 @@ pipeline {
             }
         }
 
-        stage('Deploy en Servidor') {
+        stage('Deploy en Servidor EC2') {
             steps {
                 sshagent (credentials: ['ec2-ssh-key']) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no $EC2_HOST <<EOF
-                    docker pull $IMAGE_NAME
-                    docker stop nginx-container || true
-                    docker rm nginx-container || true
-                    docker run -d --name nginx-container -p 80:80 $IMAGE_NAME
-                    EOF
-                    '''
+                    script {
+                        sh '''
+                        ssh -o StrictHostKeyChecking=no $EC2_HOST <<EOF
+                        docker pull $IMAGE_NAME
+                        docker stop nginx-container || true
+                        docker rm nginx-container || true
+                        docker run -d --name nginx-container -p 80:80 $IMAGE_NAME
+                        EOF
+                        '''
+                    }
                 }
             }
         }
