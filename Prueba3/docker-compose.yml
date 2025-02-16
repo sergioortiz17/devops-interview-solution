@@ -1,6 +1,11 @@
-version: "3.8"
 services:
   nginx:
-    image: your-dockerhub-username/nginx:latest
+    image: sergioortiz170992/nginx:latest # Asegúrate de que coincide con la imagen en Docker Hub
+    restart: always # Hace que el contenedor se reinicie si falla
     ports:
       - "80:80"
+    networks:
+      - webnet # Define una red para mejor comunicación entre servicios
+
+networks:
+  webnet:
