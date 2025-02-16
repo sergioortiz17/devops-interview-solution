@@ -1,5 +1,5 @@
 # Usa la imagen oficial de Nginx
 FROM nginx:latest
 
-# Copia tu index.html sobre el que ya trae Nginx
+# Copia el archivo index.html a la carpeta donde Nginx sirve el contenido
 COPY index.html /usr/share/nginx/html/index.html
