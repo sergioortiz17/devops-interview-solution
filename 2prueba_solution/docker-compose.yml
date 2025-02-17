@@ -1,3 +1,7 @@
+networks:
+  app_network: # 🔹 Definimos la red aquí
+    driver: bridge
+
 services:
   db:
     container_name: database
