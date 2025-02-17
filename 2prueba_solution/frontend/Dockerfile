@@ -1,18 +1,24 @@
-# Usa una imagen oficial de Node.js
-FROM node:18-alpine
+# Etapa 1: Build del frontend (compilación)
+FROM node:18-alpine AS builder
 
-# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copia los archivos del proyecto
+# Copia y descarga las dependencias
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --frozen-lockfile
 
-# Copia el código fuente
+# Copia el código fuente y construye la aplicación
 COPY . .
+RUN npm run build
 
-# Expone el puerto en el que corre React
-EXPOSE 3000
+# Etapa 2: Servidor Nginx para producción
+FROM nginx:alpine
 
-# Comando para correr la app
-CMD ["npm", "start"]
+# Copia el build generado en la etapa anterior al directorio de Nginx
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Exponer el puerto en el que corre Nginx
+EXPOSE 80
+
+# Arranca Nginx
+CMD ["nginx", "-g", "daemon off;"]
