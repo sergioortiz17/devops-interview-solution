@@ -1,15 +1,11 @@
-# ===========================
-# 🔹 Etapa 1: Construcción del frontend con Node.js
-# ===========================
+# Etapa 1: Build del frontend (compilación)
 FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copia los archivos de dependencias primero para aprovechar el cache de Docker
+# Copia y descarga las dependencias
 COPY package.json package-lock.json ./
-
-# 🔹 Instala solo dependencias de producción
-RUN npm ci --production
+RUN npm install --frozen-lockfile
 
 # Copia el código fuente
 COPY . .
@@ -18,36 +14,17 @@ COPY . .
 ARG REACT_APP_API_URL
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 
-# 🔹 Construcción del frontend
-RUN npm run build && rm -rf node_modules
+# 🔹 Genera el build asegurando que use la variable de entorno
+RUN npm run build
 
-# ===========================
-# 🔹 Etapa 2: Optimización de archivos estáticos
-# ===========================
-FROM alpine:latest AS optimizer
-
-# Instalar herramientas para comprimir archivos
-RUN apk add --no-cache gzip
-
-WORKDIR /app
-
-# Copia el build generado en la etapa anterior
-COPY --from=builder /app/build /app
-
-# Comprime los archivos estáticos
-RUN find . -type f -name "*.js" -exec gzip -9 {} \; && \
-    find . -type f -name "*.css" -exec gzip -9 {} \;
-
-# ===========================
-# 🔹 Etapa 3: Servidor Nginx optimizado
-# ===========================
+# Etapa 2: Servidor Nginx para producción
 FROM nginx:alpine
 
 # Copia la configuración de Nginx
 COPY nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Copia los archivos optimizados al directorio de Nginx
-COPY --from=optimizer /app /usr/share/nginx/html
+# Copia el build generado en la etapa anterior al directorio de Nginx
+COPY --from=builder /app/build /usr/share/nginx/html
 
 # Exponer el puerto en el que corre Nginx
 EXPOSE 80
