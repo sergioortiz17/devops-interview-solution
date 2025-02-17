@@ -37,7 +37,6 @@ services:
     depends_on:
       - backend
     environment:
-      # - REACT_APP_API_URL=http://localhost:8000/api/
       - REACT_APP_API_URL=http://52.90.91.118:8000/api/
 
 volumes:
