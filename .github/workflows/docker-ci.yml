@@ -16,7 +16,7 @@ jobs:
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          cd /home/ec2-user/devops-interview-solution/Prueba3_Legacy
+          cd /home/ec2-user/devops-interview-solution/3prueba_solution
           git pull origin main
           docker-compose down
           docker-compose up -d --build
