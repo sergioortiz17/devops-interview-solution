@@ -14,10 +14,15 @@ The React UI starts on port `3000` and expects an API server on port `8000` (sav
 **API Server URL** - `src/config/constant.js` 
 
 ```javascript
+// const config = {
+//     ...
+//     API_SERVER: 'http://localhost:8000/api/'  // <-- The magic line
+// };
 const config = {
     ...
-    API_SERVER: 'http://localhost:8000/api/'  // <-- The magic line
+    API_SERVER: process.env.REACT_APP_API_SERVER || 'http://localhost:8000/api/'
 };
+
 ```
 
 **Backend projectL** 
