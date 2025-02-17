@@ -27,7 +27,8 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=1))
 
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "*").split(" ")
+# 🔹 Permite cualquier dominio (solo en desarrollo, en producción define dominios específicos)
+ALLOWED_HOSTS = ["*"]
 
 # Application definition
 
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "apps.core.middleware.CorsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -148,37 +148,21 @@ REST_FRAMEWORK = {
 }
 
 # ##################################################################### #
-# ################### CORS              ############################### #
+# ################### CORS CONFIGURATION ############################## #
 # ##################################################################### #
-CORS_ALLOWED_ORIGINS = [
-    "http://52.90.91.118:3000",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://52.90.91.118:3000" 
-]
 
-# Configuraciones adicionales NECESARIAS
+# 🔹 Permitir solicitudes desde cualquier origen (solo en desarrollo)
+CORS_ORIGIN_ALLOW_ALL = True
+
+# 🔹 Permitir cualquier encabezado (headers)
+CORS_ALLOW_HEADERS = ["*"]
+
+# 🔹 Permitir cualquier método HTTP (GET, POST, PUT, DELETE, OPTIONS, etc.)
+CORS_ALLOW_METHODS = ["*"]
+
+# 🔹 Permitir credenciales (cookies, tokens en headers)
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
 
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
 
 # ##################################################################### #
 # ################### TESTING           ############################### #
