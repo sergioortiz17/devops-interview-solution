@@ -32,10 +32,6 @@ COPY --from=builder /app/venv /app/venv
 # Copia el código fuente del proyecto
 COPY . .
 
-# Copiar el archivo .env si existe (o crear uno temporal si falta)
-COPY env.example .env
-RUN [ -f .env ] || cp env.example .env
-
 # Activar el entorno virtual en la imagen final
 ENV PATH="/app/venv/bin:$PATH"
 
