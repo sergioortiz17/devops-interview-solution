@@ -16,6 +16,8 @@ services:
       interval: 10s
       retries: 5
       start_period: 5s
+    networks:
+      - app_network # 🔹 Conectamos el servicio a la red
 
   backend:
     container_name: django_backend
@@ -31,19 +33,21 @@ services:
         condition: service_healthy
     ports:
       - "8000:8000"
+    networks:
+      - app_network # 🔹 Conectamos backend a la red interna
 
   frontend:
     container_name: react_frontend
     build:
       context: ./frontend
-      args:
-        - REACT_APP_API_URL=http://52.90.91.118:8000/api/
     ports:
       - "3000:80"
     depends_on:
       - backend
     networks:
-      - app_network
+      - app_network # 🔹 Conectamos frontend a la red interna
+    environment:
+      - REACT_APP_API_URL=http://django_backend:8000/api/
 
 volumes:
   postgres_data:
